@@ -1,6 +1,6 @@
 # Cisco UCS & EMC VNX Converged Infrastructure (VSPEX Architecture)
 
-![Datacenter Rack Layout](diagrams/datacenter-rack-layout-27u.png)
+![Datacenter Rack Layout](images/datacenter-rack-layout-27u.png)
 
 ## Executive Summary
 This repository houses the complete **Governance-as-Code & Architecture-as-Code** framework for an Enterprise-grade Converged Infrastructure based on the **EMC VSPEX Option 5 Architecture**.
