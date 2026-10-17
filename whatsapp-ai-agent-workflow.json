@@ -1,0 +1,126 @@
+{
+  "name": "WhatsApp AI Agent with WAHA & OpenAI",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "message"
+        ]
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "id": "waha-trigger-node",
+      "name": "WAHA Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.payload.body }}",
+        "options": {
+          "systemMessage": "You are a helpful, professional, and courteous AI Customer Support Assistant for Enterprise Services. Answer queries clearly, concisely, and accurately based on context."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        680,
+        300
+      ],
+      "id": "ai-agent-node",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        500
+      ],
+      "id": "openai-chat-model-node",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $json.body.payload.from }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        520
+      ],
+      "id": "simple-memory-node",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"WAHA Trigger\"].json.body.payload.from }}",
+        "text": "={{ $json.output }}"
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.waha",
+      "typeVersion": 1,
+      "position": [
+        940,
+        300
+      ],
+      "id": "waha-send-message-node",
+      "name": "Send a text message"
+    }
+  ],
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
